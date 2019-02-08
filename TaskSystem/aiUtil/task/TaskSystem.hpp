@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Task.hpp"
-#include <list>
+#include <map>
 #include <memory>
 #include <Siv3D/String.hpp>
 
@@ -13,7 +13,7 @@ private:
 	~TaskSystem() = default;
 
 	using TaskPtr = std::shared_ptr<Task>;
-	std::map<s3d::String, TaskPtr> taskList_;
+	std::unordered_map<s3d::String, TaskPtr> taskList_;
 
 public:
 	TaskSystem(const TaskSystem&) = delete;
