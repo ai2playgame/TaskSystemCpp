@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Task.hpp"
 #include <list>
@@ -6,7 +6,7 @@
 #include <Siv3D/String.hpp>
 
 namespace aiUtil::task {
-//singltonƒNƒ‰ƒX
+//singltonã‚¯ãƒ©ã‚¹
 class TaskSystem {
 private:
 	TaskSystem() = default;
@@ -27,16 +27,16 @@ public:
 	}
 
 	/// <summary>
-	/// s3d::String‚ğƒ^ƒO‚Æ‚µ‚Äƒ^ƒXƒN¶¬
+	/// s3d::Stringã‚’ã‚¿ã‚°ã¨ã—ã¦ã‚¿ã‚¹ã‚¯ç”Ÿæˆ
 	/// </summary>
 	template<class TYPE, typename ... Args>
 	static inline void create(const s3d::String tag, Args && ... args) {
-		getInstance().taskList_.emplace(tag, std::make_shared<TYPE>(args...));
+		getInstance().taskList_.emplace(tag, std::make_shared<TYPE>(std::forward<Args>(args)...));
 		return;
 	}
 
 	/// <summary>
-	/// ˆêÄXV
+	/// ä¸€æ–‰æ›´æ–°
 	/// </summary>
 	static void update() {
 		for (auto task : getInstance().taskList_){
@@ -45,33 +45,28 @@ public:
 	}
 
 	/// <summary>
-	/// ƒ^ƒO‚ğg‚Á‚Äƒ^ƒXƒNæ“¾
+	/// ã‚¿ã‚°ã‚’ä½¿ã£ã¦ã‚¿ã‚¹ã‚¯å–å¾—
 	/// </summary>
 	/// <param name="tag"></param>
 	/// <returns></returns>
-	/*
-		static TaskPtr getTask(const s3d::String& tag) {
-		auto task = getInstance().taskList_.at[tag];
-		if (task) {
-			return task;
-		}
-		else {
-			return nullptr;
-		}
-	}
-	*/
+    static TaskPtr getTask(const s3d::String& tag) {
+        if (getInstance().taskList_.count(tag) == 0)
+            return nullptr;
+        return getInstance().taskList_[tag];
+    }
+	
 
 	/// <summary>
-	/// ƒ^ƒXƒN‚ğíœ‚·‚é
+	/// ã‚¿ã‚¹ã‚¯ã‚’å‰Šé™¤ã™ã‚‹
 	/// </summary>
 	static void remove(const s3d::String& tag) {
 		getInstance().taskList_.erase(tag);
 	}
 
 	/// <summary>
-	/// ‘S‚Ä‚Ìƒ^ƒXƒN‚ğíœ‚·‚é
+	/// å…¨ã¦ã®ã‚¿ã‚¹ã‚¯ã‚’å‰Šé™¤ã™ã‚‹
 	/// </summary>
-	static void clear() {
+	static void clear() noexcept {
 		getInstance().taskList_.clear();
 	}
 
