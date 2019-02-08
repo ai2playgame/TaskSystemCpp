@@ -49,7 +49,8 @@ public:
 	/// </summary>
 	/// <param name="tag"></param>
 	/// <returns></returns>
-	static TaskPtr getTask(const s3d::String& tag) {
+	/*
+		static TaskPtr getTask(const s3d::String& tag) {
 		auto task = getInstance().taskList_.at[tag];
 		if (task) {
 			return task;
@@ -58,6 +59,7 @@ public:
 			return nullptr;
 		}
 	}
+	*/
 
 	/// <summary>
 	/// ƒ^ƒXƒN‚ğíœ‚·‚é
