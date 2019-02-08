@@ -1,6 +1,6 @@
 #pragma once
 
-#include <utility>
+#include <Siv3D.hpp>
 
 namespace aiUtil::task
 {
@@ -12,10 +12,9 @@ class Task {
 public:	
 	virtual ~Task() = default;
 	virtual void update() = 0;
-	virtual void draw() = 0;
-
+	
 private:
-		
+	
 };
 
 

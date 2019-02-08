@@ -13,3 +13,5 @@ ipch/
 
 #OpenSiv3D
 App/
+Intermediate/
+TaskSystem/third/
