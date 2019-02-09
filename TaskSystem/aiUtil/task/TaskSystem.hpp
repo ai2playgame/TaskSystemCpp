@@ -13,7 +13,8 @@ private:
 	TaskSystem() = default;
 	~TaskSystem() = default;
 
-	std::list<std::shared_ptr<Task>> taskList_;
+	using TaskPtr = std::shared_ptr<Task>;
+	std::unordered_map<s3d::String, TaskPtr> taskList_;
 
 public:
 	TaskSystem(const TaskSystem&) = delete;
@@ -30,8 +31,8 @@ public:
 	/// s3d::Stringをタグとしてタスク生成
 	/// </summary>
 	template<class TYPE, typename ... Args>
-	static inline void create(Args && ... args) {
-		getInstance().taskList_.emplace_back(std::make_shared<TYPE>(std::forward<Args>(args)...));
+	static inline void create(const s3d::String tag, Args && ... args) {
+		getInstance().taskList_.emplace(tag, std::make_shared<TYPE>(std::forward<Args>(args)...));
 		return;
 	}
 
@@ -50,7 +51,7 @@ public:
 				//次のタスクを指すイテレータを事前取得
 				auto nextIt = std::next(taskIt);
 				
-				switch ((*taskIt)->mode_)
+				switch (taskIt->second->mode_)
 				{
 				case Task::TaskExecuteMode::None:
 					break;
@@ -79,12 +80,34 @@ public:
 	private:
 	};
 
-	static inline void update() {
-		for (auto task : getInstance().taskList_) {
-			if (task->updateCondition()) {
-				task->update();
+	class TaskCall {
+	public:
+		static inline void update() {
+			for (auto task : getInstance().taskList_) {
+				if (task.second->updateCondition()) {
+					task.second->update();
+				}
 			}
 		}
+	private:
+	};
+
+	/// <summary>
+	/// タグを使ってタスク取得
+	/// </summary>
+	/// <param name="tag"></param>
+	/// <returns></returns>
+    static inline TaskPtr getTask(const s3d::String& tag) {
+        if (getInstance().taskList_.count(tag) == 0)
+            return nullptr;
+        return getInstance().taskList_[tag];
+    }
+
+	/// <summary>
+	/// タスクを削除する
+	/// </summary>
+	static void remove(const s3d::String& tag) {
+		getInstance().taskList_.erase(tag);
 	}
 
 };
