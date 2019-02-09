@@ -33,7 +33,7 @@ public:
 	/// </summary>
 	template<class TYPE, typename ... Args>
 	static inline void create(Args && ... args) {
-		auto time = static_cast<s3d::String>(std::time(nullptr));
+		auto time = s3d::ToString(std::time(nullptr));
 		assert(time != nullptr);
 		getInstance().taskList_.emplace(time, std::make_shared<TYPE>(std::forward<Args>(args)...));
 		return;
@@ -41,7 +41,7 @@ public:
 
 	template<class TYPE>
 	static inline void create() {
-		auto time = static_cast<s3d::String>(std::time(nullptr));
+		auto time = s3d::ToString(std::time(nullptr));
 		assert(time != nullptr);
 		getInstance().taskList_.emplace(time, std::make_shared<TYPE>());
 		return;

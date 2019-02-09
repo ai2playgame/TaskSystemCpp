@@ -33,7 +33,7 @@ void Main()
 			TaskSystem::create<Task01>();
 		}
 		TaskSystem::All::update();
-		break;
+		TaskSystem::TaskCall::update();
 	}
 
 	TaskSystem::All::clear();
