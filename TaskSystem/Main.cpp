@@ -7,14 +7,16 @@ public:
 	Task01() 
 		: Task(Task::TaskExecuteMode::None)
 		, pos_(Cursor::Pos())
-		, radius_(Random(10.f, 40.f))
+		, radius_(40.f)
 	{}
 
 	void update() override final {
 		if (radius_ <= 1.f) {
 			destroy();
+			return;
 		}
-		Circle(pos_, radius_).draw(Palette::Azure);
+		Circle(pos_, radius_).draw(Palette::Purple);
+		radius_ -= 1.f;
 	}
 
 private:
@@ -29,7 +31,7 @@ void Main()
 
 	while (System::Update())
 	{
-		if (MouseL.down()) {
+		if (MouseL.pressed()) {
 			TaskSystem::create<Task01>();
 		}
 		TaskSystem::All::update();

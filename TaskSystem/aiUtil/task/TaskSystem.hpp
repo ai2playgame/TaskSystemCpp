@@ -4,7 +4,7 @@
 #include <map>
 #include <memory>
 #include <cassert>
-#include <ctime>
+#include <regex>
 #include <Siv3D/String.hpp>
 
 namespace aiUtil::task {
@@ -16,6 +16,12 @@ private:
 
 	using TaskPtr = std::shared_ptr<Task>;
 	std::unordered_map<s3d::String, TaskPtr> taskList_;
+	
+	size_t keyNumber_ = 0;
+
+	static inline String createKey() noexcept {
+		return ToString(getInstance().keyNumber_) + U"_";
+	}
 
 public:
 	TaskSystem(const TaskSystem&) = delete;
@@ -33,17 +39,19 @@ public:
 	/// </summary>
 	template<class TYPE, typename ... Args>
 	static inline void create(Args && ... args) {
-		auto time = s3d::ToString(std::time(nullptr));
-		assert(time != nullptr);
-		getInstance().taskList_.emplace(time, std::make_shared<TYPE>(std::forward<Args>(args)...));
+		getInstance().taskList_
+			.emplace(getInstance().createKey(),
+				     std::make_shared<TYPE>(std::forward<Args>(args)...));
+		getInstance().keyNumber_++;
 		return;
 	}
 
 	template<class TYPE>
 	static inline void create() {
-		auto time = s3d::ToString(std::time(nullptr));
-		assert(time != nullptr);
-		getInstance().taskList_.emplace(time, std::make_shared<TYPE>());
+		getInstance().taskList_
+			.emplace(getInstance().createKey(),
+				std::make_shared<TYPE>());
+		getInstance().keyNumber_++;
 		return;
 	}
 
@@ -53,6 +61,9 @@ public:
 	/// </summary>
 	template<class TYPE, typename ... Args>
 	static inline void createwithTag(const s3d::String tag, Args && ... args) {
+		if (tag.back() == '_') {
+			throw std::invalid_argument;
+		}
 		getInstance().taskList_.emplace(tag, std::make_shared<TYPE>(std::forward<Args>(args)...));
 		return;
 	}
@@ -96,6 +107,7 @@ public:
 		/// </summary>
 		static inline void clear() noexcept {
 			getInstance().taskList_.clear();
+			getInstance().keyNumber_ = 0;
 		}
 	private:
 	};
