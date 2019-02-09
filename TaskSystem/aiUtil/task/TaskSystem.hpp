@@ -19,11 +19,16 @@ private:
 	
 	size_t keyNumber_ = 0;
 
+	/// <summary>
+	/// ユーザーがキーを指定しないときにキーを生成する
+	/// </summary>
+	/// <returns></returns>
 	static inline String createKey() noexcept {
 		return ToString(getInstance().keyNumber_) + U"_";
 	}
 
 public:
+	//Singltonなのでdelete
 	TaskSystem(const TaskSystem&) = delete;
 	TaskSystem& operator=(const TaskSystem&) = delete;
 	TaskSystem(TaskSystem&&) = delete;
@@ -46,6 +51,9 @@ public:
 		return;
 	}
 
+	/// <summary>
+	/// タスク生成
+	/// </summary>
 	template<class TYPE>
 	static inline void create() {
 		getInstance().taskList_
@@ -57,7 +65,7 @@ public:
 
 
 	/// <summary>
-	/// s3d::Stringでタグを指定してタスク生成
+	/// s3d::Stringでkeyを指定してタスク生成
 	/// </summary>
 	template<class TYPE, typename ... Args>
 	static inline void createwithTag(const s3d::String tag, Args && ... args) {
@@ -75,9 +83,11 @@ public:
 		/// </summary>
 		static inline void update() {
 
+			//タスクリストの先頭と終端のイテレータを見る
 			auto taskIt = getInstance().taskList_.begin();
 			auto endIt = getInstance().taskList_.end();
 
+			//もしタスクが空ならkeyNumber_を初期化
 			if (taskIt == endIt) {
 				getInstance().keyNumber_ = 0;
 			}
@@ -119,6 +129,9 @@ public:
 
 	class TaskCall {
 	public:
+		/// <summary>
+		/// タスクのupdate()関数を呼び出す
+		/// </summary>
 		static inline void update() {
 			for (auto task : getInstance().taskList_) {
 				if (task.second->updateCondition()) {
