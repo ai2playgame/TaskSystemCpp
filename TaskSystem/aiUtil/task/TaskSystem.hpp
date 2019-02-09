@@ -3,6 +3,7 @@
 #include "Task.hpp"
 #include <map>
 #include <memory>
+#include <cassert>
 #include <Siv3D/String.hpp>
 
 namespace aiUtil::task {
@@ -35,39 +36,78 @@ public:
 		return;
 	}
 
-	/// <summary>
-	/// 一斉更新
-	/// </summary>
-	static void update() {
-		for (auto task : getInstance().taskList_){
-			task.second->update();
+
+	class All {
+	public:
+		/// <summary>
+		/// 消去フラグが立っているタスクを削除
+		/// </summary>
+		static inline void update() {
+			auto taskIt = getInstance().taskList_.begin();
+			auto endIt = getInstance().taskList_.end();
+
+			//末尾までループ
+			while (taskIt != endIt){
+				//次のタスクを指すイテレータを事前取得
+				auto nextIt = std::next(taskIt);
+				
+				switch (taskIt->second->mode_)
+				{
+				case Task::TaskExecuteMode::None:
+					break;
+				
+				//削除フラグが立っているので削除
+				case Task::TaskExecuteMode::Destroy:
+					getInstance().taskList_.erase(taskIt);
+					break;
+
+				//無効値
+				default:
+					assert(!"TaskDestroyMode is in bad state");
+					break;
+				}
+
+				taskIt = nextIt;
+			}
 		}
-	}
+
+		/// <summary>
+		/// 全てのタスクを削除する
+		/// </summary>
+		static inline void clear() noexcept {
+			getInstance().taskList_.clear();
+		}
+	private:
+	};
+
+	class TaskCall {
+	public:
+		static inline void update() {
+			for (auto task : getInstance().taskList_) {
+				if (task.second->updateCondition()) {
+					task.second->update();
+				}
+			}
+		}
+	private:
+	};
 
 	/// <summary>
 	/// タグを使ってタスク取得
 	/// </summary>
 	/// <param name="tag"></param>
 	/// <returns></returns>
-    static TaskPtr getTask(const s3d::String& tag) {
+    static inline TaskPtr getTask(const s3d::String& tag) {
         if (getInstance().taskList_.count(tag) == 0)
             return nullptr;
         return getInstance().taskList_[tag];
     }
-	
 
 	/// <summary>
 	/// タスクを削除する
 	/// </summary>
 	static void remove(const s3d::String& tag) {
 		getInstance().taskList_.erase(tag);
-	}
-
-	/// <summary>
-	/// 全てのタスクを削除する
-	/// </summary>
-	static void clear() noexcept {
-		getInstance().taskList_.clear();
 	}
 
 };

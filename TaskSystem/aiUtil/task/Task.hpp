@@ -12,28 +12,38 @@ public:
 
 	virtual ~Task() = default;
 	virtual void update() = 0;
-	virtual void draw() const = 0;
+	
+	/// <summary>
+	/// Às‚·‚é‚©‚Ç‚¤‚©‚Ì”»’è
+	/// </summary>
+	/// <returns></returns>
+	virtual bool updateCondition() const;
 	virtual void destroy() final;
 
 protected:
-	enum class TaskDestroyMode {
-		None,		//Task::Destroy‚ğ©•ª‚ÅŒÄ‚Ño‚·‚Æíœ‚Å‚«‚é
-		Destroy		//íœ
+	enum class TaskExecuteMode {
+		None,			//Task::Destroy‚ğ©•ª‚ÅŒÄ‚Ño‚·‚Æíœ‚Å‚«‚é
+		Destroy			//Ÿ‚ÌTask::All::update()‚Åíœ
 	};
-	TaskDestroyMode mode_;
+	TaskExecuteMode mode_;
 
-	Task(const TaskDestroyMode mode);	
+	Task(const TaskExecuteMode mode);
 private:
 	friend class TaskSystem;
 
 };
 
-inline void Task::destroy()
+inline bool Task::updateCondition() const
 {
-	mode_ = TaskDestroyMode::Destroy; 
+	return true;
 }
 
-Task::Task(const TaskDestroyMode mode)
+inline void Task::destroy()
+{
+	mode_ = TaskExecuteMode::Destroy;
+}
+
+Task::Task(const TaskExecuteMode mode)
 	:mode_(mode){}
 
 }
