@@ -1,19 +1,30 @@
 ﻿
-# include <Siv3D.hpp> // OpenSiv3D v0.3.1
+#include <Siv3D.hpp> // OpenSiv3D v0.3.1
+#include <random>
 #include "aiUtil/task/TaskSystem.hpp"
 
 class Task01 : public aiUtil::task::Task {
 public:
-	Task01(s3d::String msg) 
-		: Task()
-		, msg_(msg){}
+	Task01(const Vec2& pos) 
+		: Task(Task::TaskExecuteMode::None)
+		, radius_(Random(30.f, 100.f))
+		, pos_(pos)
+	{}
 
 	void update() override final {
-		Logger << msg_;
+		if (radius_ >= 1.0) {
+			Circle(pos_, radius_).draw(Palette::Purple);
+			radius_ -= 1.f;
+		}
+		else {
+			destroy();
+		}
+		
 	}
 
 private:
-	s3d::String msg_;
+	float radius_;
+	Vec2 pos_;
 };
 
 void Main()
@@ -21,15 +32,17 @@ void Main()
 	using namespace aiUtil::task;
 	Graphics::SetBackground(ColorF(0.8, 0.9, 1.0));
 
-	TaskSystem::create<Task01>(U"tag01", U"test message");
-
 	while (System::Update())
 	{
+		if (MouseL.down())
+		{
+			TaskSystem::create<Task01>(Cursor::PosF());
+		}
 		TaskSystem::update();
-		break;
+		TaskSystem::All::update();
 	}
 
-	TaskSystem::clear();
+	TaskSystem::All::clear();
 	Logger << U"END!!!!!!";
 
 }
