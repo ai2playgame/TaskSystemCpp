@@ -62,7 +62,7 @@ public:
 	template<class TYPE, typename ... Args>
 	static inline void createwithTag(const s3d::String tag, Args && ... args) {
 		if (tag.back() == '_') {
-			throw std::invalid_argument;
+			throw std::invalid_argument("Task's tag is missing");
 		}
 		getInstance().taskList_.emplace(tag, std::make_shared<TYPE>(std::forward<Args>(args)...));
 		return;
@@ -74,8 +74,13 @@ public:
 		/// 消去フラグが立っているタスクを削除
 		/// </summary>
 		static inline void update() {
+
 			auto taskIt = getInstance().taskList_.begin();
 			auto endIt = getInstance().taskList_.end();
+
+			if (taskIt == endIt) {
+				getInstance().keyNumber_ = 0;
+			}
 
 			//末尾までループ
 			while (taskIt != endIt){
