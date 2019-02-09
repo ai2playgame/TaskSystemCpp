@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include <cassert>
+#include <ctime>
 #include <Siv3D/String.hpp>
 
 namespace aiUtil::task {
@@ -28,14 +29,33 @@ public:
 	}
 
 	/// <summary>
-	/// s3d::Stringをタグとしてタスク生成
+	/// タスク生成
 	/// </summary>
 	template<class TYPE, typename ... Args>
-	static inline void create(const s3d::String tag, Args && ... args) {
-		getInstance().taskList_.emplace(tag, std::make_shared<TYPE>(std::forward<Args>(args)...));
+	static inline void create(Args && ... args) {
+		auto time = static_cast<s3d::String>(std::time(nullptr));
+		assert(time != nullptr);
+		getInstance().taskList_.emplace(time, std::make_shared<TYPE>(std::forward<Args>(args)...));
 		return;
 	}
 
+	template<class TYPE>
+	static inline void create() {
+		auto time = static_cast<s3d::String>(std::time(nullptr));
+		assert(time != nullptr);
+		getInstance().taskList_.emplace(time, std::make_shared<TYPE>());
+		return;
+	}
+
+
+	/// <summary>
+	/// s3d::Stringでタグを指定してタスク生成
+	/// </summary>
+	template<class TYPE, typename ... Args>
+	static inline void createwithTag(const s3d::String tag, Args && ... args) {
+		getInstance().taskList_.emplace(tag, std::make_shared<TYPE>(std::forward<Args>(args)...));
+		return;
+	}
 
 	class All {
 	public:
