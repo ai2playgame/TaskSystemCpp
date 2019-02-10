@@ -38,6 +38,9 @@ void Main()
 			if (MouseR.down()) {
 				TaskSystem::createwithTag<Task01>(U"exeption_");
 			}
+			else if (MouseM.down()) {
+				auto t = TaskSystem::getTask<Task>(U"missing Tag");
+			}
 		}
 		catch(...){
 			Logger << U"exception";

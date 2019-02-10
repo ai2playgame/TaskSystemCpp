@@ -144,11 +144,9 @@ public:
 */
 	
 	template<typename T>
-	static inline std::weak_ptr<T> getTask(const s3d::String& tag) {
-		if (getInstance().taskList_.count(tag) == 0) {
-			return nullptr;
-		}
-		auto sp = std::dynamic_pointer_cast<T>(getInstance().taskList_[tag]);
+	[[nodiscard]] static inline std::weak_ptr<T> getTask(const s3d::String& tag) {
+
+		auto sp = std::dynamic_pointer_cast<T>(getInstance().taskList_.at(tag));
 		return static_cast<std::weak_ptr<T>>(sp);
 	}
 
