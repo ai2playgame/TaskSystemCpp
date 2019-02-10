@@ -262,6 +262,11 @@
   <ItemGroup>
     <Xml Include="App\example\test.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="aiUtil\aiUtil.hpp" />
+    <ClInclude Include="aiUtil\task\Task.hpp" />
+    <ClInclude Include="aiUtil\task\TaskSystem.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

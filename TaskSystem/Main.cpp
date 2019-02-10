@@ -1,22 +1,56 @@
 ﻿
 # include <Siv3D.hpp> // OpenSiv3D v0.3.1
+#include "aiUtil/task/TaskSystem.hpp"
+
+class Task01 : public aiUtil::task::Task {
+public:
+	Task01() 
+		: Task(Task::TaskExecuteMode::None)
+		, pos_(Cursor::Pos())
+		, radius_(40.f)
+	{}
+
+	void update() override final {
+		if (radius_ <= 1.f) {
+			destroy();
+			return;
+		}
+		Circle(pos_, radius_).draw(Palette::Purple);
+		radius_ -= 1.f;
+	}
+
+private:
+	Vec2 pos_;
+	float radius_;
+};
 
 void Main()
 {
+	using namespace aiUtil::task;
 	Graphics::SetBackground(ColorF(0.8, 0.9, 1.0));
-
-	const Font font(60);
-
-	const Texture textureCat(Emoji(U"🐈"), TextureDesc::Mipped);
 
 	while (System::Update())
 	{
-		font(U"Hello, Siv3D!🐣").drawAt(Window::Center(), Palette::Black);
+		try {
+			if (MouseL.pressed()) {
+				TaskSystem::create<Task01>();
+			}
+			if (MouseR.down()) {
+				TaskSystem::createwithTag<Task01>(U"exeption_");
+			}
+			else if (MouseM.down()) {
+				auto t = TaskSystem::getTask<Task>(U"missing Tag");
+			}
+		}
+		catch(...){
+			Logger << U"exception";
+		}
 
-		font(Cursor::Pos()).draw(20, 500, ColorF(0.6));
-
-		textureCat.resized(80).draw(700, 500);
-
-		Circle(Cursor::Pos(), 60).draw(ColorF(1, 0, 0, 0.5));
+		TaskSystem::All::update();
+		TaskSystem::TaskCall::update();
 	}
+
+	TaskSystem::All::clear();
+	Logger << U"END!!!!!!";
+
 }
