@@ -43,24 +43,26 @@ public:
 	/// タスク生成
 	/// </summary>
 	template<class TYPE, typename ... Args>
-	static inline void create(Args && ... args) {
+	static inline std::shared_ptr<TYPE> create(Args && ... args) {
 		getInstance().taskList_
 			.emplace(getInstance().createKey(),
 				     std::make_shared<TYPE>(std::forward<Args>(args)...));
+		auto tmp = getInstance().getTask<TYPE>(getInstance().createKey());
 		getInstance().keyNumber_++;
-		return;
+		return tmp;
 	}
 
 	/// <summary>
 	/// タスク生成
 	/// </summary>
 	template<class TYPE>
-	static inline void create() {
+	static inline std::shared_ptr<TYPE> create() {
 		getInstance().taskList_
 			.emplace(getInstance().createKey(),
 				std::make_shared<TYPE>());
+		auto tmp = getInstance().getTask<TYPE>(getInstance().createKey());
 		getInstance().keyNumber_++;
-		return;
+		return tmp;
 	}
 
 
@@ -68,12 +70,13 @@ public:
 	/// s3d::Stringでkeyを指定してタスク生成
 	/// </summary>
 	template<class TYPE, typename ... Args>
-	static inline void createwithTag(const s3d::String tag, Args && ... args) {
+	static inline std::shared_ptr<TYPE> createwithTag(const s3d::String& tag, Args && ... args) {
 		if (tag.back() == '_') {
 			throw std::invalid_argument("Task's tag is missing");
 		}
 		getInstance().taskList_.emplace(tag, std::make_shared<TYPE>(std::forward<Args>(args)...));
-		return;
+		auto tmp = getInstance().getTask<TYPE>(tag);
+		return tmp;
 	}
 
 	class All {
@@ -112,7 +115,6 @@ public:
 					assert(!"TaskDestroyMode is in bad state");
 					break;
 				}
-
 				taskIt = nextIt;
 			}
 		}
@@ -147,11 +149,21 @@ public:
 	/// </summary>
 	/// <param name="tag"></param>
 	/// <returns></returns>
-    static inline TaskPtr getTask(const s3d::String& tag) {
+/*   
+	static inline TaskPtr getTask(const s3d::String& tag) {
         if (getInstance().taskList_.count(tag) == 0)
             return nullptr;
         return getInstance().taskList_[tag];
     }
+*/
+	
+	template<typename T>
+	static inline std::shared_ptr<T> getTask(const s3d::String& tag) {
+		if (getInstance().taskList_.count(tag) == 0) {
+			return nullptr;
+		}
+		return std::dynamic_pointer_cast<T>(getInstance().taskList_.at(tag));
+	}
 
 	/// <summary>
 	/// タスクを削除する

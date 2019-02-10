@@ -31,9 +31,18 @@ void Main()
 
 	while (System::Update())
 	{
-		if (MouseL.pressed()) {
-			TaskSystem::create<Task01>();
+		try {
+			if (MouseL.pressed()) {
+				TaskSystem::create<Task01>();
+			}
+			if (MouseR.down()) {
+				TaskSystem::createwithTag<Task01>(U"exeption_");
+			}
 		}
+		catch(...){
+			Logger << U"exception";
+		}
+
 		TaskSystem::All::update();
 		TaskSystem::TaskCall::update();
 	}
