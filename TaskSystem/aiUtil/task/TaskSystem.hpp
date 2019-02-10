@@ -24,7 +24,7 @@ private:
 	/// </summary>
 	/// <returns></returns>
 	static inline String createKey() noexcept {
-		return ToString(getInstance().keyNumber_) + U"_";
+		return ToString(getInstance().keyNumber_++) + U"_";
 	}
 
 public:
@@ -43,34 +43,20 @@ public:
 	/// タスク生成
 	/// </summary>
 	template<class TYPE, typename ... Args>
-	static inline std::shared_ptr<TYPE> create(Args && ... args) {
+	static inline std::weak_ptr<TYPE> create(Args && ... args) {
+		auto key = getInstance().createKey();
 		getInstance().taskList_
-			.emplace(getInstance().createKey(),
+			.emplace(key,
 				     std::make_shared<TYPE>(std::forward<Args>(args)...));
-		auto tmp = getInstance().getTask<TYPE>(getInstance().createKey());
-		getInstance().keyNumber_++;
+		auto tmp = getInstance().getTask<TYPE>(key);
 		return tmp;
 	}
-
-	/// <summary>
-	/// タスク生成
-	/// </summary>
-	template<class TYPE>
-	static inline std::shared_ptr<TYPE> create() {
-		getInstance().taskList_
-			.emplace(getInstance().createKey(),
-				std::make_shared<TYPE>());
-		auto tmp = getInstance().getTask<TYPE>(getInstance().createKey());
-		getInstance().keyNumber_++;
-		return tmp;
-	}
-
 
 	/// <summary>
 	/// s3d::Stringでkeyを指定してタスク生成
 	/// </summary>
 	template<class TYPE, typename ... Args>
-	static inline std::shared_ptr<TYPE> createwithTag(const s3d::String& tag, Args && ... args) {
+	static inline std::weak_ptr<TYPE> createwithTag(const s3d::String& tag, Args && ... args) {
 		if (tag.back() == '_') {
 			throw std::invalid_argument("Task's tag is missing");
 		}
@@ -158,11 +144,12 @@ public:
 */
 	
 	template<typename T>
-	static inline std::shared_ptr<T> getTask(const s3d::String& tag) {
+	static inline std::weak_ptr<T> getTask(const s3d::String& tag) {
 		if (getInstance().taskList_.count(tag) == 0) {
 			return nullptr;
 		}
-		return std::dynamic_pointer_cast<T>(getInstance().taskList_.at(tag));
+		auto sp = std::dynamic_pointer_cast<T>(getInstance().taskList_[tag]);
+		return static_cast<std::weak_ptr<T>>(sp);
 	}
 
 	/// <summary>
