@@ -13,13 +13,15 @@ class TaskCondition {
 public:
     TaskCondition(bool initial = false)
         : cond_{ [initial]() {return initial; } }
+        , last_{ initial }
     {}
     TaskCondition(std::function<bool()> condFunc)
         : cond_{std::move(condFunc)}
+        , last_{ false }
     {}
     virtual ~TaskCondition() = default;
     explicit operator bool() const noexcept { return !!*this; }
-    bool operator!() const noexcept { return last_; }
+    bool operator!() const noexcept { return !last_; }
     bool updateCondition() {
         return last_ = cond_();
     }

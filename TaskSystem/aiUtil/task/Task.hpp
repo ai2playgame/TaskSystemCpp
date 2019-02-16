@@ -21,15 +21,15 @@ public:
     virtual void destroy() final;
 
 protected:
-    std::unique_ptr<TaskCondition> cond_;
+    std::unique_ptr<TaskCondition> eraseCond_;
 
     template<class EraseConditionTy,
              std::enable_if_t<std::is_base_of_v<TaskCondition, EraseConditionTy>>* = nullptr>
     Task(EraseConditionTy&& cond)
-        : cond_{ std::make_unique<EraseConditionTy>(std::forward<EraseConditionTy>(cond)) }
+        : eraseCond_{ std::make_unique<EraseConditionTy>(std::forward<EraseConditionTy>(cond)) }
     {}
     Task()
-        : cond_{ std::make_unique<TaskCondition>() }
+        : eraseCond_{ std::make_unique<TaskCondition>() }
     {}
 private:
     friend class TaskSystem;
@@ -38,11 +38,12 @@ private:
 
 inline bool Task::updateCondition() const
 {
-    return cond_->updateCondition();
+    // cond_は削除フラグ
+    return !eraseCond_->updateCondition();
 }
 
 inline void Task::destroy()
 {
-    cond_ = std::make_unique<TaskCondition>(true);
+    eraseCond_ = std::make_unique<TaskCondition>(true);
 }
 }
