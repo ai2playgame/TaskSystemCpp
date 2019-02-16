@@ -5,8 +5,8 @@
 class Task01 : public aiUtil::task::Task {
 public:
 	Task01() 
-		: Task(Task::TaskExecuteMode::None)
-		, pos_(Cursor::Pos())
+		: Task()
+        , pos_(Cursor::Pos())
 		, radius_(40.f)
 	{}
 

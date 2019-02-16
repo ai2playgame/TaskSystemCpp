@@ -1,49 +1,48 @@
-#pragma once
+ï»¿#pragma once
 
 #include <Siv3D.hpp>
+#include "TaskCondition.hpp"
 
-namespace aiUtil::task
-{
+namespace aiUtil::task {
 /*
-TODO: ƒ^ƒXƒNŠÔ’ÊM
+TODO: ã‚¿ã‚¹ã‚¯é–“é€šä¿¡
 */
 class Task {
 public:
 
-	virtual ~Task() = default;
-	virtual void update() = 0;
-	
-	/// <summary>
-	/// Às‚·‚é‚©‚Ç‚¤‚©‚Ì”»’è
-	/// </summary>
-	/// <returns></returns>
-	virtual bool updateCondition() const;
-	virtual void destroy() final;
+    virtual ~Task() = default;
+    virtual void update() = 0;
+
+    /// <summary>
+    /// å®Ÿè¡Œã™ã‚‹ã‹ã©ã†ã‹ã®åˆ¤å®š
+    /// </summary>
+    /// <returns></returns>
+    virtual bool updateCondition() const;
+    virtual void destroy() final;
 
 protected:
-	enum class TaskExecuteMode {
-		None,			//Task::Destroy‚ğ©•ª‚ÅŒÄ‚Ño‚·‚Æíœ‚Å‚«‚é
-		Destroy			//Ÿ‚ÌTask::All::update()‚Åíœ
-	};
-	TaskExecuteMode mode_;
+    std::unique_ptr<TaskCondition> cond_;
 
-	Task(const TaskExecuteMode mode);
+    template<class EraseConditionTy,
+             std::enable_if_t<std::is_base_of_v<TaskCondition, EraseConditionTy>>* = nullptr>
+    Task(EraseConditionTy&& cond)
+        : cond_{ std::make_unique<EraseConditionTy>(std::forward<EraseConditionTy>(cond)) }
+    {}
+    Task()
+        : cond_{ std::make_unique<TaskCondition>() }
+    {}
 private:
-	friend class TaskSystem;
+    friend class TaskSystem;
 
 };
 
 inline bool Task::updateCondition() const
 {
-	return true;
+    return cond_->updateCondition();
 }
 
 inline void Task::destroy()
 {
-	mode_ = TaskExecuteMode::Destroy;
+    cond_ = std::make_unique<TaskCondition>(true);
 }
-
-Task::Task(const TaskExecuteMode mode)
-	:mode_(mode){}
-
 }

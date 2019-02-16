@@ -85,22 +85,10 @@ public:
 			while (taskIt != endIt){
 				//次のタスクを指すイテレータを事前取得
 				auto nextIt = std::next(taskIt);
-				
-				switch (taskIt->second->mode_)
-				{
-				case Task::TaskExecuteMode::None:
-					break;
-				
-				//削除フラグが立っているので削除
-				case Task::TaskExecuteMode::Destroy:
-					getInstance().taskList_.erase(taskIt);
-					break;
 
-				//無効値
-				default:
-					assert(!"TaskDestroyMode is in bad state");
-					break;
-				}
+                if (taskIt->second->cond_) {
+					getInstance().taskList_.erase(taskIt);
+                }
 				taskIt = nextIt;
 			}
 		}
