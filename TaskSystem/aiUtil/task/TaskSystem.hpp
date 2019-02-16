@@ -91,7 +91,7 @@ public:
 				//次のタスクを指すイテレータを事前取得
 				auto nextIt = std::next(taskIt);
 
-				if (*(taskIt->second->eraseCond_)) {
+				if ((taskIt->second->eraseCond_)) {
 					getInstance().taskList_.erase(taskIt);
 				}
 				taskIt = nextIt;
