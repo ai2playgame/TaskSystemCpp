@@ -209,6 +209,7 @@
     <None Include="App\nlp\japanese\jumanpp\README.md">
       <Filter>Resource Files\nlp\japanese\jumanpp</Filter>
     </None>
+    <None Include=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="App\example\test.txt">
