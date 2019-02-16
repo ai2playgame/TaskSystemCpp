@@ -24,8 +24,8 @@ protected:
 	std::unique_ptr<TaskCondition> eraseCond_;
 
 	template<class EraseConditionTy,
-		std::enable_if_t<std::is_base_of_v<TaskCondition, EraseConditionTy>>* = nullptr>
-		Task(EraseConditionTy&& cond)
+			 std::enable_if_t<std::is_base_of_v<TaskCondition, EraseConditionTy>>* = nullptr>
+	Task(EraseConditionTy&& cond)
 		: eraseCond_{ std::make_unique<EraseConditionTy>(std::forward<EraseConditionTy>(cond)) }
 	{}
 	Task()

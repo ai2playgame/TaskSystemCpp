@@ -28,7 +28,7 @@ private:
 class Task02 : public aiUtil::task::Task {
 public:
 	Task02()
-		: Task(aiUtil::task::Timer(std::chrono::system_clock::now() + std::chrono::seconds(3)))
+		: Task(aiUtil::task::timer<std::chrono::system_clock>(std::chrono::seconds(1)))
 		, pos_(Cursor::Pos() + s3d::Point{ 40, 40 })
 		, radius_(0.0f)
 	{}

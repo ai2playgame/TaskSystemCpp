@@ -19,7 +19,7 @@ public:
 		: cond_{ std::move(condFunc) }
 		, last_{ false }
 	{}
-	virtual ~TaskCondition() = default;
+	~TaskCondition() = default;
 	explicit operator bool() const noexcept { return !!*this; }
 	bool operator!() const noexcept { return !last_; }
 	bool updateCondition()
@@ -31,17 +31,14 @@ public:
 };
 
 template<class Clock>
-class Timer : public TaskCondition {
-public:
-	Timer() = default;
-	template<class Duration>
-	Timer(const std::chrono::time_point<Clock, Duration>& timepoint)
-		: TaskCondition{ [timepoint]() { return Clock::now() >= timepoint; } }
-	{}
-	template<class Rep, class Ratio>
-	Timer(const std::chrono::duration<Rep, Ratio>& duration)
-		: TaskCondition{ [timepoint = duration + Clock::now()](){ return Clock::now() >= timepoint; } }
-	{}
-};
+TaskCondition timer(typename Clock::time_point time)
+{
+	return TaskCondition([time = std::move(time)]() {return Clock::now() >= time; });
+}
+template<class Clock>
+TaskCondition timer(const typename Clock::duration& duration)
+{
+	return TaskCondition([time = Clock::now() + duration]() {return Clock::now() >= time; });
+}
 
 }
