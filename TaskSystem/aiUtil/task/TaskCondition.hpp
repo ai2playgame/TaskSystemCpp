@@ -30,16 +30,16 @@ public:
 };
 
 template<class Clock>
-class Timer : TaskCondition {
+class Timer : public TaskCondition {
 public:
     Timer() = default;
     template<class Duration>
     Timer(const std::chrono::time_point<Clock, Duration>& timepoint)
-        : cond_{ [timepoint]() { return Clock::now() >= timepoint; } }
+        : TaskCondition{ [timepoint]() { return Clock::now() >= timepoint; } }
     {}
     template<class Rep, class Ratio>
     Timer(const std::chrono::duration<Rep, Ratio>& duration)
-        : cond_{ [timepoint = duration + Clock::now()](){ return Clock::now() >= timepoint; } }
+        : TaskCondition{ [timepoint = duration + Clock::now()](){ return Clock::now() >= timepoint; } }
     {}
 };
 

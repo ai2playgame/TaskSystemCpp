@@ -24,6 +24,23 @@ private:
 	float radius_;
 };
 
+class Task02 : public aiUtil::task::Task {
+public :
+    Task02()
+        : Task(aiUtil::task::Timer(std::chrono::system_clock::now() + std::chrono::seconds(3)))
+        , pos_(Cursor::Pos() + s3d::Point{ 10, 10 })
+        , radius_(0.0f)
+    {}
+    void update() override final
+    {
+		Circle(pos_, radius_).draw(Palette::Olive);
+		radius_ += 1.f;
+    }
+private:
+	Vec2 pos_;
+	float radius_;
+};
+
 void Main()
 {
 	using namespace aiUtil::task;
@@ -34,6 +51,7 @@ void Main()
 		try {
 			if (MouseL.pressed()) {
 				TaskSystem::create<Task01>();
+                TaskSystem::create<Task02>();
 			}
 			if (MouseR.down()) {
 				TaskSystem::createwithTag<Task01>(U"exeption_");
