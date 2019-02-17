@@ -28,13 +28,13 @@ private:
 class Task02 : public aiUtil::task::Task {
 public:
 	Task02()
-		: Task(aiUtil::task::TaskFunction{this, &Task02::update},
+		: Task(aiUtil::task::TaskFunction{this, &Task02::run},
 			   aiUtil::task::timer<std::chrono::system_clock>(std::chrono::seconds(1)))
 		, pos_(Cursor::Pos() + s3d::Point{ 40, 40 })
 		, radius_(0.0f)
 	{}
 	// オーバーライドしていない！
-	void update()
+	void run()
 	{
 		Circle(pos_, radius_).draw(Palette::Olive);
 		radius_ += 1.f;
