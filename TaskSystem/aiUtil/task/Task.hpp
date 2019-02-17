@@ -1,49 +1,47 @@
-#pragma once
+ï»¿#pragma once
 
 #include <Siv3D.hpp>
+#include "TaskCondition.hpp"
 
-namespace aiUtil::task
-{
+namespace aiUtil::task {
 /*
-TODO: ƒ^ƒXƒNŠÔ’ÊM
+TODO: ã‚¿ã‚¹ã‚¯é–“é€šä¿¡
 */
 class Task {
 public:
 
 	virtual ~Task() = default;
 	virtual void update() = 0;
-	
+
 	/// <summary>
-	/// Às‚·‚é‚©‚Ç‚¤‚©‚Ì”»’è
+	/// å®Ÿè¡Œã™ã‚‹ã‹ã©ã†ã‹ã®åˆ¤å®š
 	/// </summary>
 	/// <returns></returns>
-	virtual bool updateCondition() const;
+	virtual bool updateCondition();
 	virtual void destroy() final;
 
 protected:
-	enum class TaskExecuteMode {
-		None,			//Task::Destroy‚ğ©•ª‚ÅŒÄ‚Ño‚·‚Æíœ‚Å‚«‚é
-		Destroy			//Ÿ‚ÌTask::All::update()‚Åíœ
-	};
-	TaskExecuteMode mode_;
+	TaskCondition eraseCond_;
 
-	Task(const TaskExecuteMode mode);
+	Task(TaskCondition cond)
+		: eraseCond_{ std::move(cond) }
+	{}
+	Task()
+		: eraseCond_{}
+	{}
 private:
 	friend class TaskSystem;
 
 };
 
-inline bool Task::updateCondition() const
+inline bool Task::updateCondition()
 {
-	return true;
+	// cond_ã¯å‰Šé™¤ãƒ•ãƒ©ã‚°
+	return !eraseCond_.updateCondition();
 }
 
 inline void Task::destroy()
 {
-	mode_ = TaskExecuteMode::Destroy;
+	eraseCond_ = true;
 }
-
-Task::Task(const TaskExecuteMode mode)
-	:mode_(mode){}
-
 }

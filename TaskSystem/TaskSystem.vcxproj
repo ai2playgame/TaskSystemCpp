@@ -218,6 +218,7 @@
     <Media Include="App\example\test.mp3" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".editorconfig" />
     <None Include="App\engine\emoji\noto7_dictionary.dat" />
     <None Include="App\engine\font\fontawesome\brands.otf.zst" />
     <None Include="App\engine\font\fontawesome\solid.otf.zst" />
@@ -265,6 +266,7 @@
   <ItemGroup>
     <ClInclude Include="aiUtil\aiUtil.hpp" />
     <ClInclude Include="aiUtil\task\Task.hpp" />
+    <ClInclude Include="aiUtil\task\TaskCondition.hpp" />
     <ClInclude Include="aiUtil\task\TaskSystem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

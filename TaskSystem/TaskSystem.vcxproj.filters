@@ -209,6 +209,7 @@
     <None Include="App\nlp\japanese\jumanpp\README.md">
       <Filter>Resource Files\nlp\japanese\jumanpp</Filter>
     </None>
+    <None Include=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="App\example\test.txt">
@@ -240,6 +241,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="aiUtil\task\TaskSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="aiUtil\task\TaskCondition.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
