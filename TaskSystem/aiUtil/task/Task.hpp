@@ -2,6 +2,7 @@
 
 #include <Siv3D.hpp>
 #include "TaskCondition.hpp"
+#include "TaskFunction.hpp"
 
 namespace aiUtil::task {
 /*
@@ -11,7 +12,15 @@ class Task {
 public:
 
 	virtual ~Task() = default;
-	virtual void update() = 0;
+	virtual void update()
+	{
+		if (recursionCnt_++) {
+			func_();
+			return;
+		}
+		update();
+		recursionCnt_ = 0;
+	}
 
 	/// <summary>
 	/// 実行するかどうかの判定
@@ -22,16 +31,29 @@ public:
 
 protected:
 	TaskCondition eraseCond_;
+	TaskFunction func_;
 
-	Task(TaskCondition cond)
-		: eraseCond_{ std::move(cond) }
+	Task(TaskCondition eraseCond)
+		: eraseCond_{ std::move(eraseCond) }
+		, func_{ this, &Task::update }
+		, recursionCnt_{ 0 }
+	{}
+	Task(TaskFunction func)
+		: eraseCond_{}
+		, func_{ std::move(func) }
+		, recursionCnt_{ 0 }
+	{}
+	Task(TaskFunction func, TaskCondition eraseCond)
+		: eraseCond_{ std::move(eraseCond) }
+		, func_{ std::move(func) }
+		, recursionCnt_{ 0 }
 	{}
 	Task()
-		: eraseCond_{}
+		: Task(TaskCondition{})
 	{}
 private:
 	friend class TaskSystem;
-
+	size_t recursionCnt_;
 };
 
 inline bool Task::updateCondition()
