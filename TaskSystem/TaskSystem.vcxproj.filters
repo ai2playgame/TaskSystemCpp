@@ -246,5 +246,8 @@
     <ClInclude Include="aiUtil\task\TaskCondition.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="aiUtil\task\TaskFunction.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
