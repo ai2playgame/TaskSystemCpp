@@ -10,7 +10,7 @@ class TaskFunction {
 public:
 	template<class T, std::enable_if_t<std::is_class_v<T>>* = nullptr>
 	TaskFunction(T* ptr, void(T::*func)())
-		: f_{ [ptr, func]() { ptr->*(*func)(); } }
+		: f_{ [ptr, func]() { (ptr->*func)(); } }
 	{}
 	TaskFunction(std::function<void()> func)
 		: f_{std::move(func)}
