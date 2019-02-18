@@ -267,6 +267,7 @@
     <ClInclude Include="aiUtil\aiUtil.hpp" />
     <ClInclude Include="aiUtil\task\Task.hpp" />
     <ClInclude Include="aiUtil\task\TaskCondition.hpp" />
+    <ClInclude Include="aiUtil\task\TaskFunction.hpp" />
     <ClInclude Include="aiUtil\task\TaskSystem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
