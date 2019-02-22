@@ -4,7 +4,7 @@
 #include <map>
 #include <memory>
 #include <cassert>
-#include <regex>
+#include <type_traits>
 #include <Siv3D/String.hpp>
 
 namespace aiUtil::task {
@@ -120,6 +120,20 @@ public:
 				if (task.second->updateCondition()) {
 					task.second->update();
 				}
+			}
+		}
+
+		/// <summary>
+		/// 特定の型にキャストできるタスクのupdate()を呼び出す
+		/// </summary>
+		template<class SpecificTask,
+				 std::enable_if_t<std::is_base_of_v<Task, SpecificTask>>* = nullptr>
+		static inline void update()
+		{
+			for (auto& task : getInstance().taskList_) {
+				if (auto derived = std::dynamic_pointer_cast<SpecificTask>(task.second);
+					derived && derived->updateCondition())
+					derived->update();
 			}
 		}
 	private:
